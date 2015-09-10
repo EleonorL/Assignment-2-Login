@@ -20,8 +20,25 @@ class LoginView {
 	 * @return  void BUT writes to standard output and cookies!
 	 */
 	public function response() {
-		$message = '';
-		
+		$message = "";
+		$user = "";
+		$password = "";
+
+		if(isset($_POST[self::$login])) {
+			if (isset($_POST[self::$name])) {
+				$user = $_POST[self::$name];
+			}
+			if (isset($_POST[self::$password])) {
+				$password = $_POST[self::$password];
+			}
+
+
+			if ($user == "")
+				$message = "Username is missing";
+			else if ($password == "")
+				$message = "Password is missing";
+		}
+
 		$response = $this->generateLoginFormHTML($message);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
