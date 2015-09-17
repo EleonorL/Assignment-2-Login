@@ -10,8 +10,8 @@ class DateTimeView {
 		return '<p>' . $timeString . '</p>';
 	}
 
+	//check what suffix should be added to the date
 	public function getSuffix($date) {
-
 		if($date == 1 || $date == 21 || $date == 31)
 			return "st";
 		else if($date == 2 || $date == 22)

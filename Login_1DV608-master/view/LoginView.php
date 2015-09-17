@@ -21,25 +21,34 @@ class LoginView {
 	 */
 	public function response() {
 		$message = "";
-		$user = "";
+		$username = "";
 		$password = "";
 
+		//check if login button pressed and then if username and password has been entered
 		if(isset($_POST[self::$login])) {
 			if (isset($_POST[self::$name])) {
-				$user = $_POST[self::$name];
+				$username = $_POST[self::$name];
 			}
 			if (isset($_POST[self::$password])) {
 				$password = $_POST[self::$password];
 			}
 
-
-			if ($user == "")
+			if ($username == "")
 				$message = "Username is missing";
 			else if ($password == "")
 				$message = "Password is missing";
-		}
+			else {
+				$user = new UserModel();
 
-		$response = $this->generateLoginFormHTML($message);
+
+				if (!$user->checkUser($username, $password))
+					$message = "Wrong name or password";
+                else
+                    $this->loginSuccess();
+			}
+
+		}
+		$response = $this->generateLoginFormHTML($message, $username);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
 	}
@@ -63,7 +72,7 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLoginFormHTML($message) {
+	private function generateLoginFormHTML($message,$username) {
 		return '
 			<form method="post" > 
 				<fieldset>
@@ -71,7 +80,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $username .'" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -89,5 +98,10 @@ class LoginView {
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
 	}
-	
+
+    private function loginSuccess() {
+        session_start();
+
+    }
+
 }
