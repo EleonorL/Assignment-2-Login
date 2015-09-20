@@ -26,7 +26,7 @@ class LayoutView {
   }
   
   private function renderIsLoggedIn($isLoggedIn) {
-    if ($isLoggedIn) {
+    if ($_SESSION['Logged']) {
       return '<h2>Logged in</h2>';
     }
     else {
