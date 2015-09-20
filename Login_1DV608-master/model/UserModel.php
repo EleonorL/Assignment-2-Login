@@ -18,6 +18,13 @@ class UserModel {
         return $this->password;
     }
 
+    /**
+     * Compares the parameters to the $name and $password variables
+     *
+     * @param $user
+     * @param $password
+     * @return bool
+     */
     public function checkUser($user, $password) {
         if($user == $this->name && $password == $this->password)
             return true;

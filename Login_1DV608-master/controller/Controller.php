@@ -17,16 +17,22 @@ class Controller {
     private $layoutView;
     private $user;
     private $session;
-    public function __construct()
-    {
+
+    /*
+     * Creates objects of all view and model classes
+     */
+    public function __construct() {
         $this->dateTimeView = new DateTimeView();
         $this->layoutView = new LayoutView();
         $this->user = new UserModel();
         $this->session = new Session();
         $this->loginView = new LoginView($this->user, $this->session);
     }
-    public function checkLogIn(){
-        $_SESSION['Logged'] = false;
+
+    /*
+     * Check if a user is already logged in or if the information entered is correct
+     */
+    public function checkLogIn() {
         if($this->session->checkSession()) {
             $_SESSION['Logged'] = true;
             $this->session->loadSession();
@@ -37,6 +43,7 @@ class Controller {
         else
             $_SESSION['Logged'] = false;
     }
+
     public function request() {
         $this->checkLogIn();
         $this->layoutView->render($_SESSION['Logged'], $this->loginView, $this->dateTimeView);

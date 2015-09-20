@@ -30,15 +30,15 @@ class LoginView {
 	 */
 	public function response() {
 		$message = "";
-		$username = "";
-		$password = "";
-		//check if login button pressed and then if username and password has been entered
+
+		//check if login button pressed and then if the correct username and password has been entered
 		if ($this->getLogin()) {
 			if ($this->getRequestUserName() == "")
 				$message = "Username is missing";
-			else if ($this->getRequestPassword() == "") {
+			elseif ($this->getRequestPassword() == "") {
 				$message = "Password is missing";
-			} else {
+			}
+			else {
 				if (!$this->UserModel->checkUser($this->getRequestUserName(), $this->getRequestPassword()))
 					$message = "Wrong name or password";
 				else {
@@ -47,8 +47,8 @@ class LoginView {
 				}
 			}
 		}
-		//check if logout button is pressed
-		else if($this->getLogout()) {
+		//check if logout button is pressed and destroy session if true
+		elseif($this->getLogout()) {
 			if ($_SESSION['Logged'] == true)
 				$message = "Bye bye!";
 			session_destroy();
@@ -59,12 +59,18 @@ class LoginView {
 			$message = "";
 			$response = $this->generateLogoutButtonHTML($message);
 		}
+
+		//check if user is logged in
 		if ($_SESSION['Logged'] == true) {
+
+			//if there is a saved session no message should be displayed
 			if ($this->checkSession())
 				$response = $this->generateLogoutButtonHTML($message);
+
+			//if there is no session saved, save session and display message
 			else {
 				$message = "Welcome";
-				$this->saveSession($username);
+				$this->saveSession($this->getRequestUserName());
 				$response = $this->generateLogoutButtonHTML($message);
 			}
 		}
@@ -112,7 +118,11 @@ class LoginView {
 		';
 	}
 
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
+	/**
+	 * Return username input
+	 *
+	 * @return string
+	 */
 	public function getRequestUserName() {
 		if(isset($_POST[self::$name]))
 			$username = $_POST[self::$name];
@@ -120,6 +130,12 @@ class LoginView {
 			$username = "";
 		return $username;
 	}
+
+	/**
+	 * Return password input
+	 *
+	 * @return string
+	 */
 	public function getRequestPassword() {
 		if (isset($_POST[self::$password]))
 			$password = $_POST[self::$password];
@@ -127,15 +143,39 @@ class LoginView {
 			$password = "";
 		return $password;
 	}
+
+	/**
+	 * Check if Login has been pressed
+	 *
+	 * @return bool
+	 */
 	private function getLogin() {
 		return (isset($_POST[self::$login]));
 	}
+
+	/**
+	 * Check if Lohout has been pressed
+	 *
+	 * @return bool
+	 */
 	public function getLogout() {
 		return (isset($_POST[self::$logout]));
 	}
+
+	/**
+	 * Saves session
+	 *
+	 * @param $username
+	 */
 	private function saveSession($username) {
 		$this->Session->saveSession($username);
 	}
+
+	/**
+	 * Calls checkSession() in Session class
+	 *
+	 * @return mixed
+	 */
 	private function checkSession() {
 		return $this->Session->checkSession();
 	}
