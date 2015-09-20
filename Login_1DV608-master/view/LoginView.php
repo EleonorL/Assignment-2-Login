@@ -11,59 +11,76 @@ class LoginView {
 	private static $messageId = 'LoginView::Message';
 
 	/**
+	 * Constructor
+	 *
+	 * Creates instance of a User and a Session
+	 *
+	 * @param $u
+	 * @param $s
+	 */
+
+	public function __construct($u, $s) {
+		$this->UserModel = $u;
+		$this->Session = $s;
+	}
+
+	/**
 	 * Create HTTP response
 	 *
 	 * Should be called after a login attempt has been determined
 	 *
 	 * @return  void BUT writes to standard output and cookies!
 	 */
+
 	public function response() {
+
 		$message = "";
 		$username = "";
 		$password = "";
 
 		//check if login button pressed and then if username and password has been entered
-		if( $this->getLogin()) {
+		if ($this->getLogin()) {
 
-			if($this->getRequestUserName() == "")
+			if ($this->getRequestUserName() == "")
 				$message = "Username is missing";
 
 			else if ($this->getRequestPassword() == "") {
 				$message = "Password is missing";
-			}
-			else {
-				$user = new UserModel();
-				if (!$user->checkUser($username, $password)) {
+			} else {
+				if (!$this->UserModel->checkUser($this->getRequestUserName(), $this->getRequestPassword()))
 					$message = "Wrong name or password";
-				}
 				else {
 					$_SESSION['Logged'] = true;
 					$response = $this->generateLogoutButtonHTML($message);
 				}
 			}
 		}
+
+		//check if logout button is pressed
 		else if($this->getLogout()) {
-			session_destroy();
-			$_SESSION['Logged'] = false;
-			$message = "Bye bye!";
-			$response = $this->generateLoginFormHTML($message);
+			if ($_SESSION['Logged'] == true)
+				$message = "Bye bye!";
+				session_destroy();
+				$_SESSION['Logged'] = false;
+				$response = $this->generateLoginFormHTML($message);
+			}
+		else{
+			$message = "";
+			$response = $this->generateLogoutButtonHTML($message);
 		}
 
-
-		if($_SESSION['Logged'] === true) {
-			if($this->checkSession())
+		if ($_SESSION['Logged'] == true) {
+			if ($this->checkSession())
 				$response = $this->generateLogoutButtonHTML($message);
 			else {
 				$message = "Welcome";
-				$this->saveSession($username, $password);
+				$this->saveSession($username);
 				$response = $this->generateLogoutButtonHTML($message);
 			}
 		}
-		else
+		else {
 			$response = $this->generateLoginFormHTML($message);
-
-		//$response = $this->generateLoginFormHTML($message);
-		//$response = $this->generateLogoutButtonHTML($message);
+		}
 		return $response;
 	}
 
@@ -129,19 +146,15 @@ class LoginView {
 		return (isset($_POST[self::$login]));
 	}
 
-	private function getLogout() {
+	public function getLogout() {
 		return (isset($_POST[self::$logout]));
 	}
 
-	private function saveSession($username, $password) {
-		$s = new Session();
-		$s->saveSessionUsername($username);
-		$s->saveSessionPassword($password);
+	private function saveSession($username) {
+		$this->Session->saveSession($username);
 	}
 
 	private function checkSession() {
-		$s = new Session();
-		return $s->checkSession();
+		return $this->Session->checkSession();
 	}
-
 }

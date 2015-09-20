@@ -23,33 +23,29 @@ class Controller {
 
     public function __construct()
     {
-        $this->loginView = new LoginView();
         $this->dateTimeView = new DateTimeView();
         $this->layoutView = new LayoutView();
         $this->user = new UserModel();
         $this->session = new Session();
-
+        $this->loginView = new LoginView($this->user, $this->session);
     }
 
-    public function checkLogIn() {
+    public function checkLogIn(){
+        $_SESSION['Logged'] = false;
         if($this->session->checkSession()) {
             $_SESSION['Logged'] = true;
-            $this->session->loadSessionUsername();
-            $this->session->loadSessionPassword();
+            $this->session->loadSession();
         }
-        elseif($this->loginView->getRequestUserName() === $this->user->getUsername() && $this->loginView->getRequestPassword() === $this->user->getPassword()) {
-            $_SESSION['Logged'] = true;
+        elseif($this->user->checkUser($this->loginView->getRequestUserName(), $this->loginView->getRequestPassword())) {
+           $_SESSION['Logged'] = true;
         }
-        else {
+        else
             $_SESSION['Logged'] = false;
-        }
     }
 
     public function request() {
         $this->checkLogIn();
         $this->layoutView->render($_SESSION['Logged'], $this->loginView, $this->dateTimeView);
     }
-
-
 
 }

@@ -9,31 +9,21 @@
 class Session {
 
     public function checkSession() {
-
-        if (!isset($_SESSION))
-            session_start();
-
-        if(isset($_SESSION['username']) && isset($_SESSION['password'])) {
+        if(isset($_SESSION['username']))
             return true;
-        }
         else
             return false;
     }
 
-    public function saveSessionUsername($username) {
+    public function saveSession($username) {
         $_SESSION['username'] = $username;
     }
 
-    public function saveSessionPassword($password) {
-        $_SESSION['password'] = $password;
-    }
-
-    public function loadSessionUsername() {
+    public function loadSession() {
         return $_SESSION['username'];
     }
 
-    public function loadSessionPassword() {
-        return $_SESSION['password'];
+    public function unsetSession() {
+        unset($_SESSION['username']);
     }
-
 }
