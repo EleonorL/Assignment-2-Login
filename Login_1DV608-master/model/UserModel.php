@@ -7,8 +7,8 @@
  * Time: 14:42
  */
 class UserModel {
-    private $name = "User";
-    private $password = "user";
+    private $name = "Admin";
+    private $password = "Password";
 
     public function getUsername() {
         return $this->name;
