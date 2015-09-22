@@ -7,17 +7,9 @@
  * Time: 14:42
  */
 class UserModel {
+
     private $name = "Admin";
     private $password = "Password";
-
-    public function getUsername() {
-        return $this->name;
-    }
-
-    public function getPassword() {
-        return $this->password;
-    }
-
     /**
      * Compares the parameters to the $name and $password variables
      *
